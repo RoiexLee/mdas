@@ -1,0 +1,38 @@
+{
+  "name": "vue-argon-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "dev": "vue-cli-service serve",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "ali-oss": "^6.22.0",
+    "axios": "^1.7.5",
+    "bootstrap-vue": "^2.0.4",
+    "flatpickr": "^4.5.1",
+    "html2canvas": "^1.4.1",
+    "nouislider": "^11.1.0",
+    "register-service-worker": "^1.5.2",
+    "vue": "^2.6.6",
+    "vue-flatpickr-component": "^8.1.1",
+    "vue-lazyload": "^1.2.6",
+    "vue-router": "^3.0.2",
+    "vue2-transitions": "^0.2.3",
+    "vuelidate": "^0.7.7",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-plugin-pwa": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
+    "cross-env": "^7.0.3",
+    "node-sass": "^9.0.0",
+    "prettier": "3.4.2",
+    "sass-loader": "10.5.2",
+    "vue-template-compiler": "^2.6.6"
+  }
+}
