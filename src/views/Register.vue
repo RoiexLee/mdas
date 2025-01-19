@@ -95,7 +95,7 @@
                     </div>
                   </div>
 
-				  <base-input
+                  <base-input
                     v-model="formData.inviteCode"
                     addon-left-icon="ni ni-atom"
                     placeholder="邀请码"
@@ -279,8 +279,14 @@ export default {
         { value: "3", label: "硕博研究生" },
       ],
       careers: [
-        { value: "专业人士（如教师/医生/律师等）", label: "专业人士（如教师/医生/律师等）" },
-        { value: "服务业人员（餐饮服务员/司机/售货员等）", label: "服务业人员（餐饮服务员/司机/售货员等）" },
+        {
+          value: "专业人士（如教师/医生/律师等）",
+          label: "专业人士（如教师/医生/律师等）",
+        },
+        {
+          value: "服务业人员（餐饮服务员/司机/售货员等）",
+          label: "服务业人员（餐饮服务员/司机/售货员等）",
+        },
         {
           value: "自由职业者（如作家/艺术家/摄影师/导游等）",
           label: "自由职业者（如作家/艺术家/摄影师/导游等）",
@@ -292,7 +298,10 @@ export default {
         { value: "公司职员", label: "公司职员" },
         { value: "商人/雇主", label: "商人/雇主" },
         { value: "小商贩/个体户", label: "小商贩/个体户" },
-        { value: "事业单位/公务员/政府工作人员", label: "事业单位/公务员/政府工作人员" },
+        {
+          value: "事业单位/公务员/政府工作人员",
+          label: "事业单位/公务员/政府工作人员",
+        },
         { value: "学生", label: "学生" },
         { value: "家庭主妇", label: "家庭主妇" },
         { value: "农民/牧民/渔夫", label: "农民/牧民/渔夫" },
@@ -463,15 +472,15 @@ export default {
           hobbies: this.formData.hobbies,
           inviteCode: this.formData.inviteCode,
         });
-          if (response.data.code === 1) {
-            this.showMessage({
-              title: "提示",
-              message: "注册成功",
-              onClose: () => {
-                const redirectPath = this.$route.query.redirect || "/login";
-                this.$router.replace(redirectPath);
-              },
-            });
+        if (response.data.code === 1) {
+          this.showMessage({
+            title: "提示",
+            message: "注册成功",
+            onClose: () => {
+              const redirectPath = this.$route.query.redirect || "/login";
+              this.$router.replace(redirectPath);
+            },
+          });
         } else {
           this.showError({
             title: "错误",
@@ -479,6 +488,7 @@ export default {
           });
         }
       } catch (error) {
+        console.log(error);
         this.showError({
           title: "错误",
           message: "注册失败",

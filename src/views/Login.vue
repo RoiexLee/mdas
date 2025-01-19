@@ -86,8 +86,8 @@ export default {
       const errors = this.validateForm();
       if (errors.length > 0) {
         this.showError({
-          title: "提示",
-          messages: errors[0],
+          title: "错误",
+          message: errors[0],
         });
         return;
       }
@@ -95,16 +95,20 @@ export default {
       this.isSubmitting = true;
       try {
         const response = await api.auth.login(this.formData);
-		console.log(response);
-        if (response.status === 200 && response.data && response.data.code === 1) {
-          this.$store.commit('SET_TOKEN', response.data.data);
+
+        if (
+          response.status === 200 &&
+          response.data &&
+          response.data.code === 1
+        ) {
+          this.$store.commit("SET_TOKEN", response.data.data);
           this.showMessage({
-            title: '提示',
-            message: '登录成功',
+            title: "提示",
+            message: "登录成功",
             onClose: () => {
-			  const redirectPath = this.$route.query.redirect || '/collection';
-			  this.$router.replace(redirectPath);
-			}
+              const redirectPath = this.$route.query.redirect || "/collection";
+              this.$router.replace(redirectPath);
+            },
           });
         } else {
           this.showError({
@@ -113,6 +117,7 @@ export default {
           });
         }
       } catch (error) {
+        console.log(error);
         this.showError({
           title: "错误",
           message: "登录失败",
