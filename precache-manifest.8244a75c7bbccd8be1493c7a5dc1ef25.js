@@ -44,12 +44,12 @@ self.__precacheManifest = [
     "url": "img/logo.e002ea3c.png"
   },
   {
-    "revision": "674f50d287a8c48dc19ba404d20fe713",
-    "url": "fonts/fontawesome-webfont.674f50d2.eot"
-  },
-  {
     "revision": "af7ae505a9eed503f8b8e6982036873e",
     "url": "fonts/fontawesome-webfont.af7ae505.woff2"
+  },
+  {
+    "revision": "674f50d287a8c48dc19ba404d20fe713",
+    "url": "fonts/fontawesome-webfont.674f50d2.eot"
   },
   {
     "revision": "fee66e712a8a08eef5805a46892932ad",
@@ -73,11 +73,11 @@ self.__precacheManifest = [
   },
   {
     "revision": "b9949387c6179e2dc4c675134a7b7935",
-    "url": "favicon.png"
+    "url": "img/brand/favicon.png"
   },
   {
-    "revision": "c85c75275c0a0a617f9e5accc2700908",
-    "url": "img/brand/creativetim-white-slim.png"
+    "revision": "b9949387c6179e2dc4c675134a7b7935",
+    "url": "favicon.png"
   },
   {
     "revision": "185288d13ed8e9d745bd279ea34667bf",
@@ -92,36 +92,48 @@ self.__precacheManifest = [
     "url": "img/brand/white.png"
   },
   {
-    "revision": "b9949387c6179e2dc4c675134a7b7935",
-    "url": "img/brand/favicon.png"
-  },
-  {
-    "revision": "f1894ac96a996e483a841a521bd7f017",
-    "url": "img/exm/rorschach1.png"
-  },
-  {
-    "revision": "8fa3077dab250632f2bc169026ce974d",
-    "url": "img/exm/rorschach0.png"
-  },
-  {
-    "revision": "3c96a13a127c932eaaa6f485b6f7029a",
-    "url": "img/exm/rorschach3.png"
-  },
-  {
-    "revision": "674c8547fa9a14b73c9cb3014ef40140",
-    "url": "img/exm/rorschach5.png"
-  },
-  {
-    "revision": "7fb2687513b67fa758a56f2dec66173f",
-    "url": "img/exm/rorschach4.png"
+    "revision": "c85c75275c0a0a617f9e5accc2700908",
+    "url": "img/brand/creativetim-white-slim.png"
   },
   {
     "revision": "016e695d54a58ca91a60d151985b7b2d",
     "url": "img/exm/rorschach2.png"
   },
   {
+    "revision": "3c96a13a127c932eaaa6f485b6f7029a",
+    "url": "img/exm/rorschach3.png"
+  },
+  {
+    "revision": "8fa3077dab250632f2bc169026ce974d",
+    "url": "img/exm/rorschach0.png"
+  },
+  {
+    "revision": "7fb2687513b67fa758a56f2dec66173f",
+    "url": "img/exm/rorschach4.png"
+  },
+  {
+    "revision": "674c8547fa9a14b73c9cb3014ef40140",
+    "url": "img/exm/rorschach5.png"
+  },
+  {
+    "revision": "f1894ac96a996e483a841a521bd7f017",
+    "url": "img/exm/rorschach1.png"
+  },
+  {
     "revision": "594b1ee1d95ada356eaad078e9217932",
     "url": "img/ill/ill-2.svg"
+  },
+  {
+    "revision": "dc49ad52655e1d9d0552c026db3ef688",
+    "url": "img/theme/landing.jpg"
+  },
+  {
+    "revision": "974088a1931e40895bac6db119c62448",
+    "url": "img/theme/promo-1.png"
+  },
+  {
+    "revision": "20d702b83a06bdb2ea71c4c0cb9a7a56",
+    "url": "img/theme/profile.jpg"
   },
   {
     "revision": "fd4a34d026fb9e0f4867188d47b11ba8",
@@ -130,18 +142,6 @@ self.__precacheManifest = [
   {
     "revision": "7789b5bfa57722dd8916b1b9ff1b1d37",
     "url": "img/theme/img-2-1200x1000.jpg"
-  },
-  {
-    "revision": "dc49ad52655e1d9d0552c026db3ef688",
-    "url": "img/theme/landing.jpg"
-  },
-  {
-    "revision": "20d702b83a06bdb2ea71c4c0cb9a7a56",
-    "url": "img/theme/profile.jpg"
-  },
-  {
-    "revision": "974088a1931e40895bac6db119c62448",
-    "url": "img/theme/promo-1.png"
   },
   {
     "revision": "edc7106b21ec12e57022b2ebd534cd2d",
