@@ -12,7 +12,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm ci
-          npm run serve:prod
+          npm run serve
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
