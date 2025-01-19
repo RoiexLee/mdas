@@ -117,7 +117,7 @@ export default {
           });
         }
       } catch (error) {
-        console.log(error);
+        console.log("登录失败", error);
         this.showError({
           title: "错误",
           message: "登录失败",
