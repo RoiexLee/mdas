@@ -8,7 +8,6 @@ import Register from "./views/Register.vue";
 import Profile from "./views/Profile.vue";
 import Collection from "./views/Collection.vue";
 import Admin from "./views/Admin.vue";
-import Api from "./views/Api.vue";
 import store from "./store";
 
 Vue.use(Router);
@@ -16,16 +15,6 @@ Vue.use(Router);
 const router = new Router({
   linkExactActiveClass: "active",
   routes: [
-    {
-      path: "/dev",
-      name: "dev",
-      components: {
-        header: AppHeader,
-        default: Api,
-        footer: AppFooterCustom,
-      },
-      meta: { requiresAuth: false },
-    },
     {
       path: "/",
       name: "home",
