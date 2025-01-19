@@ -134,6 +134,7 @@ export default {
         inviterCode: "",
         inviteCode: "",
         registerTime: "",
+        collectionTime: "",
       },
       roleMap: {
         0: "管理员",
