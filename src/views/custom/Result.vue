@@ -398,6 +398,10 @@ export default {
     handleLogout() {
       this.$store.commit("CLEAR_TOKEN");
       this.$router.push("/");
+      this.showMessage({
+        title: "提示",
+        message: "退出登陆成功",
+      });
     },
     async saveAsImage() {
       this.savingImage = true;
@@ -424,6 +428,7 @@ export default {
           message: "结果保存成功",
         });
       } catch (error) {
+        console.log("结果保存失败", error);
         this.showError({
           title: "错误",
           message: "结果保存失败",
@@ -448,6 +453,7 @@ export default {
           });
         }
       } catch (error) {
+        console.log(error);
         this.showError({
           title: "错误",
           message: "获取邀请码失败",
