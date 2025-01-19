@@ -65,7 +65,7 @@ export default {
       this.$router.push("/");
       this.showMessage({
         title: "提示",
-        message: "退出成功",
+        message: "退出登录成功",
       });
     },
   },
