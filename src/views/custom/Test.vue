@@ -30,7 +30,7 @@
           :disabled="!audioUrl"
           class="ml-3"
           type="success"
-          @click="playAudio"
+          @click="replayAudio"
         >
           回放录音
         </base-button>
@@ -75,18 +75,18 @@
           :disabled="!videoUrl"
           class="ml-3"
           type="success"
-          @click="playVideo"
+          @click="replayVideo"
         >
           回放录像
         </base-button>
       </div>
       <div class="video-container mt-3 mb-3">
         <video
-          v-if="isRecordingVideo"
+          v-if="isRecordingVideo || videoUrl"
           ref="videoElement"
           :autoplay="true"
           :controls="!!videoUrl"
-          :muted="true"
+          :muted="isRecordingVideo"
           class="video-preview"
           height="auto"
           playsinline
@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import RecordingService from '@/services/recordingService';
+import RecordingService from "@/services/recordingService";
 
 export default {
   name: "Test",
@@ -177,7 +177,7 @@ export default {
       } catch (error) {
         this.audioStatus = {
           success: false,
-          message: error.message || "未知错误",
+          message: "开始录音失败",
         };
         this.isRecordingAudio = false;
       }
@@ -189,13 +189,13 @@ export default {
         this.audioUrl = result.url;
         this.audioStatus = {
           success: true,
-          message: "音频测试成功！",
+          message: "录音成功",
           url: this.audioUrl,
         };
       } catch (error) {
         this.audioStatus = {
           success: false,
-          message: error.message || "未知错误",
+          message: "结束录音失败",
         };
       } finally {
         this.isRecordingAudio = false;
@@ -206,15 +206,15 @@ export default {
       try {
         this.isRecordingVideo = true;
         this.videoUrl = null;
-		await this.$nextTick();
+        await this.$nextTick();
         await this.recordingService.startVideoRecording(
           this.$refs.videoElement,
-          this.recordingDuration
+          this.recordingDuration,
         );
       } catch (error) {
         this.videoStatus = {
           success: false,
-          message: error.message || "未知错误",
+          message: "开始录像失败",
         };
         this.isRecordingVideo = false;
       }
@@ -222,24 +222,26 @@ export default {
 
     async stopVideoRecording() {
       try {
-        const result = await this.recordingService.stopRecording(this.$refs.videoElement);
+        const result = await this.recordingService.stopRecording(
+          this.$refs.videoElement,
+        );
         this.videoUrl = result.url;
         this.videoStatus = {
           success: true,
-          message: "视频测试成功！",
+          message: "录像成功",
           url: this.videoUrl,
         };
       } catch (error) {
         this.videoStatus = {
           success: false,
-          message: error.message || "未知错误",
+          message: "结束录像失败",
         };
       } finally {
         this.isRecordingVideo = false;
       }
     },
 
-    async playAudio() {
+    async replayAudio() {
       const audioPlayer = this.$refs.audioPlayer;
       if (audioPlayer && this.audioUrl) {
         audioPlayer.src = this.audioUrl;
@@ -248,13 +250,13 @@ export default {
         } catch (error) {
           this.audioStatus = {
             success: false,
-            message: "音频播放失败",
+            message: "回放录音失败",
           };
         }
       }
     },
 
-    async playVideo() {
+    async replayVideo() {
       const videoElement = this.$refs.videoElement;
       if (videoElement && this.videoUrl) {
         videoElement.srcObject = null;
@@ -264,7 +266,7 @@ export default {
         } catch (error) {
           this.videoStatus = {
             success: false,
-            message: "视频播放失败",
+            message: "回放录像失败",
           };
         }
       }
