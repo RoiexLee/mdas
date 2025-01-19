@@ -28,7 +28,7 @@
 
 <script>
 import api from "@/services/api";
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 
 export default {
   name: "Watch",
@@ -44,17 +44,17 @@ export default {
   computed: {
     isDev() {
       return process.env.NODE_ENV === "development";
-    }
+    },
   },
   methods: {
-    ...mapActions('modal', ['showError']),
+    ...mapActions("modal", ["showError"]),
     updatePlayState(state) {
       this.playState = state;
     },
     handleVideoError(event) {
       this.showError({
-        title: '视频播放错误',
-        message: "视频播放失败"
+        title: "视频播放错误",
+        message: "视频播放失败",
       });
     },
     async fetchVideoUrl() {
@@ -62,18 +62,23 @@ export default {
         this.loading = true;
         const response = await api.oss.getUrl(this.videoSource);
 
-        if (response.data.code === 1) {
+        if (
+          response.status === 200 &&
+          response.data &&
+          response.data.code === 1
+        ) {
           this.videoUrl = response.data.data;
         } else {
-          this.showError({
-            title: '获取视频失败',
-            message: response.data.msg || '无法获取视频地址'
+          await this.showError({
+            title: "获取视频失败",
+            message: "获取视频失败",
           });
         }
       } catch (error) {
-        this.showError({
-          title: '获取视频失败',
-          message: error.message || '请检查网络连接'
+        console.log("获取视频失败", error);
+        await this.showError({
+          title: "获取视频失败",
+          message: "获取视频失败",
         });
       } finally {
         this.loading = false;
