@@ -472,7 +472,11 @@ export default {
           hobbies: this.formData.hobbies,
           inviteCode: this.formData.inviteCode,
         });
-        if (response.data.code === 1) {
+        if (
+          response.status === 200 &&
+          response.data &&
+          response.data.code === 1
+        ) {
           this.showMessage({
             title: "提示",
             message: "注册成功",
