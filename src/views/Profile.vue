@@ -223,7 +223,7 @@ export default {
     },
 
     handleLogout() {
-      this.$store.commit("CLEAR_TOKEN");
+      this.$store.commit("CLEAR");
       this.$router.push("/");
       this.showMessage({
         title: "成功",
