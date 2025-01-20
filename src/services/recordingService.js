@@ -2,7 +2,7 @@ export default class RecordingService {
   constructor() {
     this.mediaRecorder = null;
     this.recordedChunks = [];
-	this.startVideoTime = null;
+    this.startVideoTime = null;
     this.videoTimes = {};
     this.currentStream = null;
     this.onAutoStop = null;
@@ -19,7 +19,7 @@ export default class RecordingService {
       // 检查音频轨道
       const audioTrack = stream.getAudioTracks()[0];
       if (!audioTrack) {
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
         throw new Error("未检测到麦克风输入");
       }
 
@@ -46,11 +46,11 @@ export default class RecordingService {
         },
         audio: true,
       });
-      
+
       // 检查获取到的视频轨道参数
       const videoTrack = stream.getVideoTracks()[0];
       const settings = videoTrack.getSettings();
-      
+
       const errors = [];
       if (settings.width < 1280 || settings.height < 720) {
         errors.push("摄像头分辨率不足，要求至少1280x720");
@@ -60,7 +60,7 @@ export default class RecordingService {
       }
 
       if (errors.length > 0) {
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
         throw new Error(errors[0]);
       }
 
@@ -75,7 +75,7 @@ export default class RecordingService {
             .play()
             .then(resolve)
             .catch((error) =>
-              reject(new Error("视频播放失败")),
+              reject(new Error(error.message || "视频加载失败")),
             );
         };
         videoElement.onerror = () => reject(new Error("视频加载失败"));
@@ -105,7 +105,10 @@ export default class RecordingService {
 
         if (maxDuration > 0) {
           setTimeout(() => {
-            if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+            if (
+              this.mediaRecorder &&
+              this.mediaRecorder.state === "recording"
+            ) {
               this.mediaRecorder.stop();
             }
           }, maxDuration);
@@ -137,13 +140,13 @@ export default class RecordingService {
 
             resolve(result);
           } catch (error) {
-            reject(new Error("处理录制文件失败"));
+            reject(new Error(error.message || "处理录制文件失败"));
           }
         };
 
         resolve(this.mediaRecorder);
       } catch (error) {
-        reject(new Error("启动录制失败"));
+        reject(new Error(error.message || "启动录制失败"));
       }
     });
   }
@@ -176,13 +179,13 @@ export default class RecordingService {
     if (!timePoint) {
       throw new Error("时间点标识不能为空");
     }
-	if (timePoint === "start") {
-		this.startVideoTime = new Date().getTime();
-	} else if(!this.startVideoTime) {
-		throw new Error("开始录制时间尚未记录");
-	} else {
-		this.videoTimes[timePoint] = new Date().getTime() - this.startVideoTime;
-	}
+    if (timePoint === "start") {
+      this.startVideoTime = new Date().getTime();
+    } else if (!this.startVideoTime) {
+      throw new Error("开始录制时间尚未记录");
+    } else {
+      this.videoTimes[timePoint] = new Date().getTime() - this.startVideoTime;
+    }
   }
 
   createVideoTimesFile() {
