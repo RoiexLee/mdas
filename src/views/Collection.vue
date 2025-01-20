@@ -380,10 +380,10 @@
           >
             <Result
               v-if="state === STATES.RESULT"
+              :answerFile="answerFile"
               :signatureFile="signatureFile"
               :videoFile="videoFile"
               :videoTimesFile="videoTimesFile"
-              :answerFile="answerFile"
             ></Result>
           </card>
         </div>
@@ -476,8 +476,8 @@ export default {
     ...mapActions("modal", ["showError", "showMessage"]),
     handleVideoError(error) {
       this.showError({
-        title: "视频错误",
-        message: "视频加载失败",
+        title: "错误",
+        message: error.message || "视频加载失败",
       });
     },
     handleVideoLoaded() {
@@ -485,8 +485,8 @@ export default {
       if (video && video.srcObject) {
         video.play().catch((error) => {
           this.showError({
-            title: "视频错误",
-            message: "视频播放失败",
+            title: "错误",
+            message: error.message || "播放视频失败",
           });
         });
       }
@@ -498,7 +498,7 @@ export default {
         this.recordingService.recordVideoTime("start");
       } catch (error) {
         this.showError({
-          title: "录制错误",
+          title: "错误",
           message: error.message || "启动录制失败",
         });
       }
@@ -622,8 +622,8 @@ export default {
             this.videoTimesFile = this.recordingService.createVideoTimesFile();
           } catch (error) {
             this.showError({
-              title: "录制错误",
-              message: "停止录制失败",
+              title: "错误",
+              message: error.message || "停止录制失败",
             });
           }
           break;
