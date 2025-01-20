@@ -6,6 +6,12 @@
       </router-link>
       <ul class="navbar-nav align-items-lg-center ml-lg-auto">
         <template v-if="isAuthenticated()">
+          <li v-if="isAdmin" class="nav-item">
+            <router-link class="nav-link" to="/admin">
+              <i class="fa fa-cog"></i>
+              <span class="nav-link-inner--text">管理页面</span>
+            </router-link>
+          </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/profile">
               <i class="fa fa-user-circle"></i>
@@ -57,11 +63,17 @@ export default {
     BaseDropdown,
     Modal,
   },
+  computed: {
+    isAdmin() {
+      const userInfo = this.$store.getters.userInfo;
+      return userInfo && userInfo.role === 0;
+    },
+  },
   methods: {
     ...mapGetters(["isAuthenticated"]),
     ...mapActions("modal", ["showMessage"]),
     handleLogout() {
-      this.$store.commit("CLEAR_TOKEN");
+      this.$store.commit("CLEAR");
       this.$router.push("/");
       this.showMessage({
         title: "提示",
