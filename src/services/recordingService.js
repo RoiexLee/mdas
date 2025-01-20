@@ -100,20 +100,6 @@ export default class RecordingService {
             this.recordedChunks.push(event.data);
           }
         };
-
-        this.mediaRecorder.start();
-
-        if (maxDuration > 0) {
-          setTimeout(() => {
-            if (
-              this.mediaRecorder &&
-              this.mediaRecorder.state === "recording"
-            ) {
-              this.mediaRecorder.stop();
-            }
-          }, maxDuration);
-        }
-
         this.mediaRecorder.onstop = async () => {
           try {
             if (this.currentStream) {
@@ -143,6 +129,18 @@ export default class RecordingService {
             reject(new Error(error.message || "处理录制文件失败"));
           }
         };
+        this.mediaRecorder.start();
+
+        if (maxDuration > 0) {
+          setTimeout(() => {
+            if (
+              this.mediaRecorder &&
+              this.mediaRecorder.state === "recording"
+            ) {
+              this.mediaRecorder.stop();
+            }
+          }, maxDuration);
+        }
 
         resolve(this.mediaRecorder);
       } catch (error) {
@@ -165,7 +163,46 @@ export default class RecordingService {
       return;
     }
 
-    this.mediaRecorder.stop();
+    return new Promise((resolve, reject) => {
+      try {
+        this.mediaRecorder.onstop = () => {
+          try {
+            if (this.currentStream) {
+              this.currentStream.getTracks().forEach((track) => track.stop());
+            }
+
+            if (videoElement) {
+              videoElement.srcObject = null;
+            }
+
+            const blob = new Blob(this.recordedChunks, {
+              type: this.mediaRecorder.mimeType,
+            });
+            const url = URL.createObjectURL(blob);
+			const result = {
+				url,
+				blob,
+				file: new File(
+				  [blob],
+				  `recording.${this.mediaRecorder.mimeType.split("/")[1]}`,
+				  { type: this.mediaRecorder.mimeType },
+			  ),
+			};
+
+            if (this.onAutoStop) {
+			  this.onAutoStop(result);
+            }
+            resolve(result);
+          } catch (error) {
+            reject(new Error(error.message || "处理录制文件失败"));
+          }
+        };
+
+        this.mediaRecorder.stop();
+      } catch (error) {
+        reject(new Error(error.message || "停止录制失败"));
+      }
+    });
   }
 
   _cleanupVideoElement(videoElement) {

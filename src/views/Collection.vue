@@ -614,9 +614,10 @@ export default {
 
         case this.STATES.SCALE_ANNOUNCEMENT:
           try {
-            this.videoFile = await this.recordingService.stopRecording(
+            const result = await this.recordingService.stopRecording(
               this.$refs.video,
             );
+            this.videoFile = result.file;
             this.recordingService.recordVideoTime("rorschachFiveAnswer");
             this.videoTimesFile = this.recordingService.createVideoTimesFile();
           } catch (error) {
