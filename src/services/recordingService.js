@@ -16,16 +16,23 @@ export default class RecordingService {
         video: false,
       });
 
+      // 检查音频轨道
+      const audioTrack = stream.getAudioTracks()[0];
+      if (!audioTrack) {
+        stream.getTracks().forEach(track => track.stop());
+        throw new Error("未检测到麦克风输入");
+      }
+
       this.currentStream = stream;
       return this._startRecording(stream, "audio/webm", maxDuration);
     } catch (error) {
-      throw new Error("启动音频录制失败");
+      throw new Error(error.message || "启动音频录制失败");
     }
   }
 
   async startVideoRecording(videoElement, maxDuration = 0) {
     if (!videoElement) {
-      throw new Error("视频元素未准备就绪");
+      throw new Error("视频元素尚未准备就绪");
     }
 
     try {
@@ -39,6 +46,23 @@ export default class RecordingService {
         },
         audio: true,
       });
+      
+      // 检查获取到的视频轨道参数
+      const videoTrack = stream.getVideoTracks()[0];
+      const settings = videoTrack.getSettings();
+      
+      const errors = [];
+      if (settings.width < 1280 || settings.height < 720) {
+        errors.push("摄像头分辨率不足，要求至少1280x720");
+      }
+      if (settings.frameRate < 30) {
+        errors.push("摄像头帧率不足，要求至少30fps");
+      }
+
+      if (errors.length > 0) {
+        stream.getTracks().forEach(track => track.stop());
+        throw new Error(errors[0]);
+      }
 
       this.currentStream = stream;
       videoElement.srcObject = stream;
@@ -60,7 +84,7 @@ export default class RecordingService {
       return this._startRecording(stream, "video/webm", maxDuration);
     } catch (error) {
       this._cleanupVideoElement(videoElement);
-      throw new Error("启动视频录制失败");
+      throw new Error(error.message || "启动视频录制失败");
     }
   }
 
