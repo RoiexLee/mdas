@@ -152,7 +152,7 @@ export default {
       audioStatus: null,
       videoStatus: null,
       recordingService: new RecordingService(),
-      recordingDuration: 5000,
+      recordingMaxDuration: 5000,
     };
   },
   computed: {
@@ -173,13 +173,27 @@ export default {
     async startAudioRecording() {
       try {
         this.isRecordingAudio = true;
-        await this.recordingService.startAudioRecording(this.recordingDuration);
+        this.audioUrl = null;
+        
+        this.recordingService.setAutoStopCallback((result) => {
+          this.audioUrl = result.url;
+          this.audioStatus = {
+            success: true,
+            message: "录音成功",
+            url: this.audioUrl,
+          };
+          this.isRecordingAudio = false;
+          this.recordingService.setAutoStopCallback(null);
+        });
+
+        await this.recordingService.startAudioRecording(this.recordingMaxDuration);
       } catch (error) {
         this.audioStatus = {
           success: false,
           message: "开始录音失败",
         };
         this.isRecordingAudio = false;
+        this.recordingService.setAutoStopCallback(null);
       }
     },
 
@@ -206,10 +220,21 @@ export default {
       try {
         this.isRecordingVideo = true;
         this.videoUrl = null;
+        this.recordingService.setAutoStopCallback(async (result) => {
+          this.videoUrl = result.url;
+          this.videoStatus = {
+            success: true,
+            message: "录像成功",
+            url: this.videoUrl,
+          };
+          this.isRecordingVideo = false;
+          this.recordingService.setAutoStopCallback(null);
+        });
+
         await this.$nextTick();
         await this.recordingService.startVideoRecording(
           this.$refs.videoElement,
-          this.recordingDuration,
+          this.recordingMaxDuration,
         );
       } catch (error) {
         this.videoStatus = {
@@ -217,6 +242,7 @@ export default {
           message: "开始录像失败",
         };
         this.isRecordingVideo = false;
+        this.recordingService.setAutoStopCallback(null);
       }
     },
 

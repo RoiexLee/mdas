@@ -5,6 +5,7 @@ export default class RecordingService {
 	this.startVideoTime = null;
     this.videoTimes = {};
     this.currentStream = null;
+    this.onAutoStop = null;
   }
 
   async startAudioRecording(maxDuration = 0) {
@@ -50,7 +51,7 @@ export default class RecordingService {
             .play()
             .then(resolve)
             .catch((error) =>
-              reject(new Error("视频播放失败：" + error.message)),
+              reject(new Error("视频播放失败")),
             );
         };
         videoElement.onerror = () => reject(new Error("视频加载失败"));
@@ -76,24 +77,49 @@ export default class RecordingService {
           }
         };
 
-        // 开始录制
         this.mediaRecorder.start();
 
-        // 如果设置了最大录制时长
         if (maxDuration > 0) {
           setTimeout(() => {
-            if (
-              this.mediaRecorder &&
-              this.mediaRecorder.state === "recording"
-            ) {
-              this.stopRecording();
+            if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+              this.mediaRecorder.stop();
             }
           }, maxDuration);
         }
 
+        this.mediaRecorder.onstop = async () => {
+          try {
+            if (this.currentStream) {
+              this.currentStream.getTracks().forEach((track) => track.stop());
+            }
+
+            const blob = new Blob(this.recordedChunks, {
+              type: this.mediaRecorder.mimeType,
+            });
+            const url = URL.createObjectURL(blob);
+            const result = {
+              url,
+              blob,
+              file: new File(
+                [blob],
+                `recording.${this.mediaRecorder.mimeType.split("/")[1]}`,
+                { type: this.mediaRecorder.mimeType },
+              ),
+            };
+
+            if (this.onAutoStop) {
+              this.onAutoStop(result);
+            }
+
+            resolve(result);
+          } catch (error) {
+            reject(new Error("处理录制文件失败"));
+          }
+        };
+
         resolve(this.mediaRecorder);
       } catch (error) {
-        reject(new Error("启动录制失败：" + (error.message || "未知错误")));
+        reject(new Error("启动录制失败"));
       }
     });
   }
@@ -103,44 +129,16 @@ export default class RecordingService {
       throw new Error("录制尚未开始");
     }
 
-    return new Promise((resolve, reject) => {
-      try {
-        this.mediaRecorder.onstop = () => {
-          try {
-            if (this.currentStream) {
-              this.currentStream.getTracks().forEach((track) => track.stop());
-            }
+    if (videoElement) {
+      videoElement.srcObject = null;
+    }
 
-            if (videoElement) {
-              videoElement.srcObject = null;
-            }
+    // 如果已经停止，直接返回
+    if (this.mediaRecorder.state === "inactive") {
+      return;
+    }
 
-            const blob = new Blob(this.recordedChunks, {
-              type: this.mediaRecorder.mimeType,
-            });
-            const url = URL.createObjectURL(blob);
-
-            resolve({
-              url,
-              blob,
-              file: new File(
-                [blob],
-                `recording.${this.mediaRecorder.mimeType.split("/")[1]}`,
-                { type: this.mediaRecorder.mimeType },
-              ),
-            });
-          } catch (error) {
-            reject(
-              new Error("处理录制文件失败：" + (error.message || "未知错误")),
-            );
-          }
-        };
-
-        this.mediaRecorder.stop();
-      } catch (error) {
-        reject(new Error("停止录制失败：" + (error.message || "未知错误")));
-      }
-    });
+    this.mediaRecorder.stop();
   }
 
   _cleanupVideoElement(videoElement) {
@@ -157,7 +155,7 @@ export default class RecordingService {
 	if (timePoint === "start") {
 		this.startVideoTime = new Date().getTime();
 	} else if(!this.startVideoTime) {
-		throw new Error("开始录制时间未记录");
+		throw new Error("开始录制时间尚未记录");
 	} else {
 		this.videoTimes[timePoint] = new Date().getTime() - this.startVideoTime;
 	}
@@ -168,5 +166,9 @@ export default class RecordingService {
       .map(([key, time]) => `${key},${time}`)
       .join("\n");
     return new File([csv], "times.csv", { type: "text/csv" });
+  }
+
+  setAutoStopCallback(callback) {
+    this.onAutoStop = callback;
   }
 }
