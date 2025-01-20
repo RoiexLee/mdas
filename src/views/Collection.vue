@@ -638,9 +638,6 @@ export default {
           break;
       }
     },
-    logOut() {
-      this.$store.commit("CLEAR_TOKEN");
-    },
   },
 };
 </script>
