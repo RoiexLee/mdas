@@ -127,6 +127,16 @@
         </router-link>
       </div>
     </div>
+
+    <!-- 上传进度条 -->
+    <div v-if="showProgressDialog" class="progress-dialog">
+      <card class="mb-4" shadow>
+        <h3>文件上传中</h3>
+        <base-progress :height="20" label="上传进度" :value="uploadProgress" type="info">
+          {{ uploadProgress.toFixed(2) }}%
+        </base-progress>
+      </card>
+    </div>
   </section>
 </template>
 
@@ -161,6 +171,8 @@ export default {
       downloading: false,
       uploading: false,
       analyzing: false,
+      uploadProgress: 0,
+      showProgressDialog: false,
       fileStatus: {
         signature: false,
         video: false,
@@ -286,6 +298,8 @@ export default {
 
     async uploadFiles() {
       this.uploading = true;
+      this.showProgressDialog = true;
+      this.uploadProgress = 0;
       try {
         if (!this.signatureFile) {
           await this.showError({
@@ -307,11 +321,19 @@ export default {
           });
           return;
         }
+
+        // 监视进度
+        const progressWatcher = setInterval(() => {
+          this.uploadProgress = Number(ossService.progress);
+        }, 100);
+
         await ossService.multipartUploadToOSS(
           "video/part2",
           this.videoFile,
           "video",
         );
+
+        clearInterval(progressWatcher);
 
         if (!this.videoTimesFile) {
           await this.showError({
@@ -346,6 +368,7 @@ export default {
         });
       } finally {
         this.uploading = false;
+        this.showProgressDialog = false;
       }
     },
     async requestAnalysis() {
