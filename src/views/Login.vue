@@ -94,34 +94,43 @@ export default {
 
       this.isSubmitting = true;
       try {
-        const response = await api.auth.login(this.formData);
+        const loginResponse = await api.auth.login(this.formData);
 
         if (
-          response.status === 200 &&
-          response.data &&
-          response.data.code === 1
+          loginResponse.status === 200 &&
+          loginResponse.data &&
+          loginResponse.data.code === 1
         ) {
-          this.$store.commit("SET_TOKEN", response.data.data);
-          this.showMessage({
-            title: "提示",
-            message: "登录成功",
-            onClose: () => {
-              const redirectPath = this.$route.query.redirect || "/collection";
-              this.$router.replace(redirectPath);
-            },
-          });
+          this.$store.commit("SET_TOKEN", loginResponse.data.data);
+          
+          const profileResponse = await api.auth.profile();
+          if (
+            profileResponse.status === 200 &&
+            profileResponse.data &&
+            profileResponse.data.code === 1
+          ) {
+            this.$store.commit("SET_USER_INFO", profileResponse.data.data);
+            
+            this.showMessage({
+              title: "提示",
+              message: "登录成功",
+              onClose: () => {
+                const redirectPath = this.$route.query.redirect || "/collection";
+                this.$router.replace(redirectPath);
+              },
+            });
+          } else {
+            throw new Error("获取用户信息失败");
+          }
         } else {
-          this.showError({
-            title: "错误",
-            message: "登录失败",
-          });
+          throw new Error("登录失败");
         }
       } catch (error) {
-        console.log("登录失败", error);
         this.showError({
           title: "错误",
-          message: "登录失败",
+          message: error.message || "登录失败",
         });
+        this.$store.commit("CLEAR");
       } finally {
         this.isSubmitting = false;
       }
