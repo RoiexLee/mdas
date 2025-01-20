@@ -44,17 +44,6 @@ const auth = {
         Accept: "application/json",
       },
     }),
-  logout: () =>
-    api.post(
-      "/user/logout",
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      },
-    ),
   profile: () => api.get("/user/profile"),
 };
 
@@ -83,6 +72,16 @@ const user = {
         Accept: "application/json",
       },
     }),
+  updateCollectionStatus: (isCollected) =>
+    api.put(
+      "/user/update/isCollected",
+      { isCollected: isCollected },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    ),
 };
 
 export { api };
