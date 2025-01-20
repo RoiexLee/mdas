@@ -357,6 +357,8 @@ export default {
         }
         await ossService.uploadToOSS("answer/part2", this.answerFile, "answer");
 
+        await api.user.updateCollectionStatus("1");
+        
         this.showMessage({
           title: "提示",
           message: "上传成功",
@@ -419,7 +421,7 @@ export default {
       }
     },
     handleLogout() {
-      this.$store.commit("CLEAR_TOKEN");
+      this.$store.commit("CLEAR");
       this.$router.push("/");
       this.showMessage({
         title: "提示",
