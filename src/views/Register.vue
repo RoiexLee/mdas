@@ -469,8 +469,8 @@ export default {
           gender: this.formData.gender,
           educationLevel: this.formData.educationLevel,
           career: this.formData.career,
-          hobbies: this.formData.hobbies,
-          inviteCode: this.formData.inviteCode,
+          hobbies: this.formData.hobbies.join(","),
+          inviterCode: this.formData.inviteCode,
         });
         if (
           response.status === 200 &&
@@ -488,7 +488,7 @@ export default {
         } else {
           this.showError({
             title: "错误",
-            message: "注册失败",
+            message: "注册失败:" + response.data.msg,
           });
         }
       } catch (error) {
