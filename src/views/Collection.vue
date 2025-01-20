@@ -639,6 +639,18 @@ export default {
       }
     },
   },
+  async created() {
+    const userInfo = this.$store.getters.userInfo;
+    if (userInfo && userInfo.isCollected === 1) {
+      this.showMessage({
+        title: "提示",
+        message: "您已完成采集，不能重复采集",
+        onClose: () => {
+          this.$router.replace("/");
+        },
+      });
+    }
+  },
 };
 </script>
 
