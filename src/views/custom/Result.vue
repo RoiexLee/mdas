@@ -132,7 +132,12 @@
     <div v-if="showProgressDialog" class="progress-dialog">
       <card class="mb-4" shadow>
         <h3>文件上传中</h3>
-        <base-progress :height="20" label="上传进度" :value="uploadProgress" type="info">
+        <base-progress
+          :height="20"
+          :value="uploadProgress"
+          label="上传进度"
+          type="info"
+        >
           {{ uploadProgress.toFixed(2) }}%
         </base-progress>
       </card>
@@ -246,12 +251,6 @@ export default {
   methods: {
     ...mapActions("modal", ["showError", "showMessage"]),
     checkFiles() {
-      console.log({
-        signatureFile: this.signatureFile,
-        videoFile: this.videoFile,
-        videoTimesFile: this.videoTimesFile,
-        answerFile: this.answerFile,
-      });
       this.fileStatus = {
         signature: !!this.signatureFile,
         video: !!this.videoFile,
@@ -289,7 +288,7 @@ export default {
       } catch (error) {
         this.showError({
           title: "错误",
-          message: "文件下载失败",
+          message: error.message || "文件下载失败",
         });
       } finally {
         this.downloading = false;
@@ -297,10 +296,13 @@ export default {
     },
 
     async uploadFiles() {
+      if (this.uploading) return; // 防止重复上传
+
       this.uploading = true;
       this.showProgressDialog = true;
       this.uploadProgress = 0;
       try {
+        // 检查文件
         if (!this.signatureFile) {
           await this.showError({
             title: "错误",
@@ -358,7 +360,7 @@ export default {
         await ossService.uploadToOSS("answer/part2", this.answerFile, "answer");
 
         await api.user.updateCollectionStatus("1");
-        
+
         this.showMessage({
           title: "提示",
           message: "上传成功",
@@ -366,7 +368,7 @@ export default {
       } catch (error) {
         this.showError({
           title: "错误",
-          message: "上传失败，请将本地文件发送给管理员",
+          message: error.message || "上传失败，请将本地文件发送给管理员",
         });
       } finally {
         this.uploading = false;
@@ -414,7 +416,7 @@ export default {
       } catch (error) {
         await this.showError({
           title: "错误",
-          message: "获取分析结果失败，请重试",
+          message: error.message || "获取分析结果失败，请重试",
         });
       } finally {
         this.analyzing = false;
@@ -453,10 +455,9 @@ export default {
           message: "结果保存成功",
         });
       } catch (error) {
-        console.log("结果保存失败", error);
         this.showError({
           title: "错误",
-          message: "结果保存失败",
+          message: error.message || "结果保存失败",
         });
       } finally {
         this.savingImage = false;
@@ -478,17 +479,37 @@ export default {
           });
         }
       } catch (error) {
-        console.log(error);
         this.showError({
           title: "错误",
-          message: "获取邀请码失败",
+          message: error.message || "获取邀请码失败",
         });
       }
     },
   },
-  created() {
+  async created() {
     this.checkFiles();
     this.getInviteCode();
+
+    // 自动上传文件
+    if (this.allFilesReady) {
+      try {
+        await this.downloadFiles();
+        await this.uploadFiles();
+        if (!this.uploading) {
+          await this.requestAnalysis();
+        }
+      } catch (error) {
+        this.showError({
+          title: "错误",
+          message: error.message || "自动处理失败，请手动操作",
+        });
+      }
+    } else {
+      this.showError({
+        title: "错误",
+        message: "部分文件缺失，请检查",
+      });
+    }
   },
 };
 </script>
